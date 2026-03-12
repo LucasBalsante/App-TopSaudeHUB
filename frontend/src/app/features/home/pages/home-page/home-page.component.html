@@ -10,13 +10,59 @@
             [enableRowActions]="true"
             [rowActions]="rowActions"
             (dialogSubmitted)="handleDialogSubmitted($event)"
+            (rowActionClicked)="handleRowAction($event)"
+            (selectionChanged)="handleSelectionChanged($event)"
             newDialogTitle="Novo pedido"
             editDialogTitle="Editar pedido"
             [stickyHeader]="true"
             [stickyFooter]="true"
-            [enableRowClickLog]="true"
             ariaLabel="Tabela de pedidos"
             filterPlaceholder="Buscar pedidos"
         />
+
+                @if (selectedOrders().length) {
+                    <section class="selected-order-items" aria-live="polite">
+                        <div class="selected-order-items-header">
+                            <h3>Itens dos pedidos selecionados</h3>
+                            <span>{{ selectedOrders().length }} pedido(s)</span>
+                        </div>
+
+                        <div class="selected-order-list">
+                            @for (order of selectedOrders(); track order.id) {
+                                <article class="selected-order-card">
+                                    <div class="selected-order-card-header">
+                                        <div>
+                                            <strong>{{ order.customerName }}</strong>
+                                            <span>Pedido {{ order.id }}</span>
+                                        </div>
+                                        <div class="selected-order-total">
+                                            <span>Total do pedido</span>
+                                            <strong>{{ formatCurrency(order.totalAmount) }}</strong>
+                                        </div>
+                                    </div>
+
+                                    @if (order.items.length) {
+                                        <div class="selected-order-item-list">
+                                            @for (item of order.items; track item.productId) {
+                                                <div class="selected-order-item-row">
+                                                    <div>
+                                                        <strong>{{ item.productName }}</strong>
+                                                        <span>Quantidade: {{ item.quantity }}</span>
+                                                    </div>
+                                                    <div class="selected-order-item-values">
+                                                        <span>Unitario: {{ formatCurrency(item.unitPrice) }}</span>
+                                                        <span>Total: {{ formatCurrency(item.lineTotal) }}</span>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    } @else {
+                                        <p class="selected-order-empty">Nenhum item encontrado para este pedido.</p>
+                                    }
+                                </article>
+                            }
+                        </div>
+                    </section>
+                }
     </sidenav-responsive>
 </section>

@@ -41,6 +41,17 @@ namespace backend.src.Domain.Entities
             TotalAmount += orderItem.LineTotal;
         }
 
+        public void UpdateCustomer(Guid customerId)
+        {
+            CustomerId = ValidateCustomerId(customerId);
+        }
+
+        public void ClearItems()
+        {
+            OrderItems.Clear();
+            TotalAmount = 0;
+        }
+
         private static Guid ValidateCustomerId(Guid customerId)
         {
             if (customerId == Guid.Empty)

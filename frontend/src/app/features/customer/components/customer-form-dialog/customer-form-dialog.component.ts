@@ -52,7 +52,7 @@ export class CustomerFormDialogComponent {
   protected readonly customerForm = this.formBuilder.nonNullable.group({
     name: [this.data.customer?.name ?? '', [Validators.required, Validators.minLength(3)]],
     email: [this.data.customer?.email ?? '', [Validators.required, Validators.email]],
-    document: [this.data.customer?.document ?? '', [Validators.required, Validators.pattern(/^(\d{11}|\d{3}\.\d{3}\.\d{3}-\d{2})$/)]]
+    document: [this.formatCpf(this.data.customer?.document ?? ''), [Validators.required, Validators.pattern(/^(\d{3}\.\d{3}\.\d{3}-\d{2})$/)]]
   });
 
   protected get nameControl() {
@@ -71,12 +71,44 @@ export class CustomerFormDialogComponent {
     this.dialogRef.close();
   }
 
+  protected onDocumentInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const formattedValue = this.formatCpf(input.value);
+
+    this.documentControl.setValue(formattedValue, { emitEvent: false });
+  }
+
   protected onSubmit(): void {
     if (this.customerForm.invalid) {
       this.customerForm.markAllAsTouched();
       return;
     }
 
-    this.dialogRef.close(this.customerForm.getRawValue());
+    this.dialogRef.close({
+      ...this.customerForm.getRawValue(),
+      document: this.extractDigits(this.documentControl.getRawValue())
+    });
+  }
+
+  private formatCpf(value: string): string {
+    const digits = this.extractDigits(value).slice(0, 11);
+
+    if (digits.length <= 3) {
+      return digits;
+    }
+
+    if (digits.length <= 6) {
+      return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+    }
+
+    if (digits.length <= 9) {
+      return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+    }
+
+    return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9, 11)}`;
+  }
+
+  private extractDigits(value: string): string {
+    return value.replace(/\D/g, '');
   }
 }

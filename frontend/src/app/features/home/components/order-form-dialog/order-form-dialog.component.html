@@ -4,49 +4,80 @@
   <mat-dialog-content class="dialog-content">
     <p class="dialog-copy">Preencha os dados do pedido.</p>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Cliente</mat-label>
-      <input matInput formControlName="cliente" required />
-      @if (clienteControl.invalid && (clienteControl.dirty || clienteControl.touched)) {
-        @if (clienteControl.hasError('required')) {
-          <mat-error>Cliente e obrigatorio.</mat-error>
+    <div class="customer-summary-row">
+      <mat-form-field appearance="outline" class="customer-field">
+        <mat-label>Cliente</mat-label>
+        <mat-select formControlName="cliente" panelClass="customer-select-panel" required>
+          @for (customer of customerOptions(); track customer.id) {
+            <mat-option [value]="customer.id">{{ customer.name }}</mat-option>
+          }
+        </mat-select>
+        @if (clienteControl.invalid && (clienteControl.dirty || clienteControl.touched)) {
+          @if (clienteControl.hasError('required')) {
+            <mat-error>Cliente e obrigatorio.</mat-error>
+          }
         }
-        @if (clienteControl.hasError('minlength')) {
-          <mat-error>Cliente deve ter pelo menos 3 caracteres.</mat-error>
-        }
-      }
-    </mat-form-field>
+      </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Total do pedido</mat-label>
-      <input matInput formControlName="totalPedido" type="number" min="0.01" step="0.01" required />
-      @if (totalPedidoControl.invalid && (totalPedidoControl.dirty || totalPedidoControl.touched)) {
-        @if (totalPedidoControl.hasError('required')) {
-          <mat-error>Total do pedido e obrigatorio.</mat-error>
-        }
-        @if (totalPedidoControl.hasError('min')) {
-          <mat-error>Total do pedido deve ser maior que zero.</mat-error>
-        }
-      }
-    </mat-form-field>
+      <mat-form-field appearance="outline" class="order-total-field">
+        <mat-label>Total do Pedido</mat-label>
+        <input matInput type="text" [value]="formatCurrency(getOrderTotal())" readonly />
+      </mat-form-field>
+    </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Status</mat-label>
-      <input matInput formControlName="status" required />
-      @if (statusControl.invalid && (statusControl.dirty || statusControl.touched)) {
-        @if (statusControl.hasError('required')) {
-          <mat-error>Status e obrigatorio.</mat-error>
-        }
-        @if (statusControl.hasError('minlength')) {
-          <mat-error>Status deve ter pelo menos 3 caracteres.</mat-error>
-        }
-      }
-    </mat-form-field>
+    <div class="form-separator" aria-hidden="true"></div>
+
+    <div class="product-selection-row">
+      <div class="product-selection-fields">
+        <mat-form-field appearance="outline" class="product-select-field">
+          <mat-label>Produto</mat-label>
+          <mat-select formControlName="productId" panelClass="product-select-panel">
+            @for (product of productOptions(); track product.id) {
+              <mat-option [value]="product.id">{{ product.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="product-quantity-field">
+          <mat-label>Quantidade</mat-label>
+          <input matInput formControlName="quantity" type="number" min="1" step="1" />
+        </mat-form-field>
+      </div>
+
+      <button mat-flat-button type="button" class="add-product-button" (click)="addProduct()" [disabled]="!productIdControl.value || quantityControl.invalid">
+        {{ editingProductId() ? 'Salvar Alteracao do Produto' : 'Adicionar Produto ao Pedido' }}
+      </button>
+    </div>
+
+    @if (selectedProducts().length) {
+      <section class="selected-products">
+        <strong>Produtos adicionados</strong>
+        <div class="selected-products-list">
+          @for (product of selectedProducts(); track product.id) {
+            <article class="selected-product-card">
+              <div class="selected-product-description">
+                <span class="selected-product-name">{{ product.name }}</span>
+                <span class="selected-product-code">{{ product.sku }}</span>
+              </div>
+
+              <span class="selected-product-meta">Preco Unitario: {{ formatCurrency(product.price) }}</span>
+              <span class="selected-product-meta">Quantidade: {{ product.quantity }}</span>
+              <span class="selected-product-meta">Total do Produto: {{ formatCurrency(getProductTotal(product)) }}</span>
+
+              <div class="selected-product-actions">
+                <button mat-button type="button" (click)="editProduct(product.id)">Editar</button>
+                <button mat-button type="button" (click)="removeProduct(product.id)">Remover</button>
+              </div>
+            </article>
+          }
+        </div>
+      </section>
+    }
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
     <button mat-button type="button" (click)="onCancel()">{{ data.cancelLabel ?? 'Cancelar' }}</button>
-    <button mat-flat-button type="submit" [disabled]="orderForm.invalid">
+    <button mat-flat-button type="submit" [disabled]="orderForm.invalid || !hasSelectedProducts()">
       {{ data.confirmLabel ?? 'Salvar' }}
     </button>
   </mat-dialog-actions>

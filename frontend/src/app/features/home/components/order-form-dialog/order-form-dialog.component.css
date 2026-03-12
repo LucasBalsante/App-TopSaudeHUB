@@ -18,6 +18,117 @@ form {
   color: #475569;
 }
 
+.customer-summary-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.8fr) minmax(180px, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.customer-field,
+.order-total-field {
+  width: 100%;
+}
+
 mat-form-field {
   width: 100%;
+}
+
+:host ::ng-deep .customer-select-panel {
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+:host ::ng-deep .product-select-panel {
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.form-separator {
+  height: 1px;
+  background: #dbe4f0;
+}
+
+.product-selection-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.product-selection-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(120px, 0.8fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.add-product-button {
+  min-height: 48px;
+  white-space: nowrap;
+  justify-self: start;
+}
+
+.product-select-field {
+  width: 100%;
+}
+
+.product-quantity-field {
+  width: 100%;
+}
+
+.selected-products {
+  display: grid;
+  gap: 12px;
+}
+
+.selected-products-list {
+  display: grid;
+  gap: 12px;
+}
+
+.selected-product-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  border: 1px solid #dbe4f0;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.selected-product-description {
+  display: grid;
+  min-width: 180px;
+}
+
+.selected-product-name {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.selected-product-code {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.selected-product-meta {
+  font-size: 0.875rem;
+  color: #334155;
+  white-space: nowrap;
+}
+
+.selected-product-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+@media (max-width: 640px) {
+  .customer-summary-row {
+    grid-template-columns: 1fr;
+  }
 }

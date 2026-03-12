@@ -61,7 +61,12 @@ export class CustomerPageComponent implements OnInit {
   protected readonly tableColumns: DataTableColumn[] = [
     { key: 'name', label: 'Nome', sortable: true },
     { key: 'email', label: 'Email', sortable: true },
-    { key: 'document', label: 'Documento', sortable: true }
+    {
+      key: 'document',
+      label: 'Documento',
+      sortable: true,
+      cell: (row) => this.formatCpf(String(row['document'] ?? ''))
+    }
   ];
 
   protected readonly tableData = signal<DataTableRow[]>([]);
@@ -167,5 +172,15 @@ export class CustomerPageComponent implements OnInit {
       email: customer.email,
       document: customer.document
     };
+  }
+
+  private formatCpf(value: string): string {
+    const digits = value.replace(/\D/g, '').slice(0, 11);
+
+    if (digits.length !== 11) {
+      return value;
+    }
+
+    return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9, 11)}`;
   }
 }

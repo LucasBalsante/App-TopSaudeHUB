@@ -53,6 +53,18 @@ public class ProductRepository : IProductRepository
             .AnyAsync(product => product.Sku == normalizedSku && (!ignoreProductId.HasValue || product.Id != ignoreProductId.Value), cancellationToken);
     }
 
+    public async Task<string?> GetLastSkuByPrefixAsync(string skuPrefix, CancellationToken cancellationToken = default)
+    {
+        var normalizedPrefix = skuPrefix.Trim().ToUpperInvariant();
+
+        return await _context.Products
+            .AsNoTracking()
+            .Where(product => product.Sku.StartsWith($"{normalizedPrefix}-"))
+            .OrderByDescending(product => product.Sku)
+            .Select(product => product.Sku)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async Task<bool> HasRelatedOrderItemsAsync(Guid productId, CancellationToken cancellationToken = default)
     {
         return await _context.OrderItems

@@ -104,6 +104,7 @@ export class DataTable implements AfterViewInit {
     readonly dialogSubmitted = output<DataTableDialogSubmittedEvent>();
     readonly rowClicked = output<DataTableRow>();
     readonly rowActionClicked = output<{ action: DataTableRowAction; row: DataTableRow }>();
+    readonly selectionChanged = output<DataTableRow[]>();
     readonly selection = new SelectionModel<DataTableRow>(true, []);
     readonly dataSource = new MatTableDataSource<DataTableRow>([]);
     readonly clickedRowLog = signal('Nenhuma linha selecionada.');
@@ -117,6 +118,7 @@ export class DataTable implements AfterViewInit {
 
             this.dataSource.data = rows;
             this.selection.clear();
+            this.selectionChanged.emit([]);
 
             if (this.paginator) {
                 this.paginator.firstPage();
@@ -197,15 +199,18 @@ export class DataTable implements AfterViewInit {
     toggleAllRows(): void {
         if (this.isAllSelected()) {
             this.selection.clear();
+            this.selectionChanged.emit([]);
             return;
         }
 
         this.selection.clear();
         this.dataSource.filteredData.forEach((row) => this.selection.select(row));
+        this.selectionChanged.emit([...this.selection.selected]);
     }
 
     toggleRow(row: DataTableRow): void {
         this.selection.toggle(row);
+        this.selectionChanged.emit([...this.selection.selected]);
     }
 
     handleRowClick(row: DataTableRow): void {

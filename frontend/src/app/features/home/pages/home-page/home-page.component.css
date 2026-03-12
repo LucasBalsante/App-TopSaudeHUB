@@ -10,3 +10,139 @@
 .home-page h2 {
   text-align: center;
 }
+
+.selected-order-items {
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid #dbe4f0;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+}
+
+.selected-order-items-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.selected-order-items-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #0f172a;
+}
+
+.selected-order-items-header span {
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.selected-order-list {
+  display: grid;
+  gap: 14px;
+}
+
+.selected-order-card {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+}
+
+.selected-order-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 12px;
+}
+
+.selected-order-card-header div {
+  display: grid;
+  gap: 4px;
+}
+
+.selected-order-card-header strong {
+  color: #0f172a;
+}
+
+.selected-order-card-header span {
+  color: #334155;
+  font-size: 0.9rem;
+}
+
+.selected-order-total {
+  display: grid;
+  gap: 4px;
+  text-align: right;
+}
+
+.selected-order-total span {
+  color: #475569;
+  font-size: 0.85rem;
+}
+
+.selected-order-total strong {
+  color: #0f172a;
+}
+
+.selected-order-item-list {
+  display: grid;
+  gap: 10px;
+}
+
+.selected-order-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.selected-order-item-row:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.selected-order-item-row div {
+  display: grid;
+  gap: 4px;
+}
+
+.selected-order-item-row strong {
+  color: #0f172a;
+}
+
+.selected-order-item-row span {
+  color: #1e293b;
+}
+
+.selected-order-item-values {
+  text-align: right;
+}
+
+.selected-order-empty {
+  margin: 0;
+  color: #64748b;
+}
+
+@media (max-width: 768px) {
+  .selected-order-items-header,
+  .selected-order-card-header,
+  .selected-order-item-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .selected-order-item-values {
+    text-align: left;
+  }
+
+  .selected-order-total {
+    text-align: left;
+  }
+}

@@ -41,7 +41,7 @@ public class ProductService : IProductService
         {
             try
             {
-                var sku = await GenerateUniqueSkuAsync(innerCancellationToken);
+                var sku = await GenerateUniqueSkuAsync(request.Name, innerCancellationToken);
                 var product = new Product(request.Name, sku, request.Price, request.StockQty, request.IsActive);
                 await _productRepository.AddAsync(product, innerCancellationToken);
                 await _productRepository.SaveChangesAsync(innerCancellationToken);
@@ -116,11 +116,15 @@ public class ProductService : IProductService
         product.IsActive,
         product.CreatedAt);
 
-    private async Task<string> GenerateUniqueSkuAsync(CancellationToken cancellationToken)
+    private async Task<string> GenerateUniqueSkuAsync(string productName, CancellationToken cancellationToken)
     {
+        var skuPrefix = GenerateSkuPrefix(productName);
+
         for (var attempt = 0; attempt < 5; attempt++)
         {
-            var sku = $"SKU-{Guid.NewGuid():N}";
+            var lastSku = await _productRepository.GetLastSkuByPrefixAsync(skuPrefix, cancellationToken);
+            var nextSequence = GetNextSkuSequence(lastSku);
+            var sku = $"{skuPrefix}-{nextSequence:D4}";
 
             if (!await _productRepository.ExistsBySkuAsync(sku, cancellationToken: cancellationToken))
             {
@@ -129,5 +133,39 @@ public class ProductService : IProductService
         }
 
         throw new InvalidOperationException("Não foi possível gerar um SKU único para o produto.");
+    }
+
+    private static string GenerateSkuPrefix(string productName)
+    {
+        var cleanedName = new string(productName
+            .Trim()
+            .Where(char.IsLetterOrDigit)
+            .Take(3)
+            .ToArray())
+            .ToUpperInvariant();
+
+        if (string.IsNullOrWhiteSpace(cleanedName))
+        {
+            throw new ArgumentException("O nome do produto é obrigatório.", nameof(productName));
+        }
+
+        return cleanedName;
+    }
+
+    private static int GetNextSkuSequence(string? lastSku)
+    {
+        if (string.IsNullOrWhiteSpace(lastSku))
+        {
+            return 1;
+        }
+
+        var skuParts = lastSku.Split('-', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        if (skuParts.Length != 2 || !int.TryParse(skuParts[1], out var currentSequence))
+        {
+            throw new InvalidOperationException("Não foi possível identificar o próximo SKU do produto.");
+        }
+
+        return currentSequence + 1;
     }
 }

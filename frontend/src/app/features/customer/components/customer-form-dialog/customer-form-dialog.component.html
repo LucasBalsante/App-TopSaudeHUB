@@ -32,13 +32,13 @@
 
     <mat-form-field appearance="outline">
       <mat-label>Documento</mat-label>
-      <input matInput formControlName="document" required />
+      <input matInput formControlName="document" maxlength="14" placeholder="000.000.000-00" (input)="onDocumentInput($event)" required />
       @if (documentControl.invalid && (documentControl.dirty || documentControl.touched)) {
         @if (documentControl.hasError('required')) {
           <mat-error>Documento e obrigatorio.</mat-error>
         }
         @if (documentControl.hasError('pattern')) {
-          <mat-error>Use um CPF valido com 11 digitos ou no formato 000.000.000-00.</mat-error>
+          <mat-error>Use um CPF valido no formato 000.000.000-00.</mat-error>
         }
       }
     </mat-form-field>

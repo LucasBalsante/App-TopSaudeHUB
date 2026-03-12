@@ -49,6 +49,16 @@
             StockQty -= quantity;
         }
 
+        public void IncreaseStock(int quantity)
+        {
+            if (quantity <= 0)
+            {
+                throw new ArgumentException("A quantidade para reposição de estoque deve ser maior que zero.", nameof(quantity));
+            }
+
+            StockQty += quantity;
+        }
+
         private static string NormalizeName(string name)
         {
             var normalizedName = name?.Trim() ?? string.Empty;

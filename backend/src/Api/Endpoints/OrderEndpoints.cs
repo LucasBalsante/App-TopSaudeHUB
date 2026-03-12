@@ -12,6 +12,12 @@ public static class OrderEndpoints
         var group = app.MapGroup("/api/orders")
             .WithTags("Orders");
 
+        group.MapGet("/", async (IOrderService orderService, CancellationToken cancellationToken) =>
+        {
+            var orders = await orderService.GetAllAsync(cancellationToken);
+            return Results.Ok(ApiResponse<IReadOnlyCollection<OrderSummaryDto>>.Success(orders, "Pedidos listados com sucesso."));
+        });
+
         group.MapGet("/{id:guid}", async (Guid id, IOrderService orderService, CancellationToken cancellationToken) =>
         {
             var result = await orderService.GetByIdAsync(id, cancellationToken);
@@ -25,6 +31,14 @@ public static class OrderEndpoints
             var result = await orderService.CreateAsync(request, cancellationToken);
             return result.IsSuccess
                 ? Results.Created($"/api/orders/{result.Data!.Id}", ApiResponse<OrderDto>.Success(result.Data!, result.Message))
+                : ToErrorResult(result);
+        });
+
+        group.MapPut("/{id:guid}", async (Guid id, UpdateOrderRequest request, IOrderService orderService, CancellationToken cancellationToken) =>
+        {
+            var result = await orderService.UpdateAsync(id, request, cancellationToken);
+            return result.IsSuccess
+                ? Results.Ok(ApiResponse<OrderDto>.Success(result.Data!, result.Message))
                 : ToErrorResult(result);
         });
 
