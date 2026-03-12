@@ -1,17 +1,29 @@
 <h2 mat-dialog-title>{{ data.title }}</h2>
 
-<form [formGroup]="orderForm" (ngSubmit)="onSubmit()">
+<form [formGroup]="orderForm" (ngSubmit)="onSubmit()" (keydown.enter)="handleEnterSubmit($event)">
   <mat-dialog-content class="dialog-content">
     <p class="dialog-copy">Preencha os dados do pedido.</p>
 
     <div class="customer-summary-row">
       <mat-form-field appearance="outline" class="customer-field">
         <mat-label>Cliente</mat-label>
-        <mat-select formControlName="cliente" panelClass="customer-select-panel" required>
-          @for (customer of customerOptions(); track customer.id) {
-            <mat-option [value]="customer.id">{{ customer.name }}</mat-option>
+        <input
+          #customerAutocompleteTrigger="matAutocompleteTrigger"
+          matInput
+          type="text"
+          [value]="customerSearch()"
+          (input)="onCustomerSearchInput($event)"
+          [matAutocomplete]="customerAutocomplete"
+          placeholder="Buscar cliente"
+          required
+        />
+        <mat-autocomplete #customerAutocomplete="matAutocomplete">
+          @for (customer of getFilteredCustomers(); track customer.id) {
+            <mat-option [value]="customer.name" (onSelectionChange)="selectCustomer(customer, $event)">
+              {{ customer.name }}
+            </mat-option>
           }
-        </mat-select>
+        </mat-autocomplete>
         @if (clienteControl.invalid && (clienteControl.dirty || clienteControl.touched)) {
           @if (clienteControl.hasError('required')) {
             <mat-error>Cliente e obrigatorio.</mat-error>
@@ -31,11 +43,22 @@
       <div class="product-selection-fields">
         <mat-form-field appearance="outline" class="product-select-field">
           <mat-label>Produto</mat-label>
-          <mat-select formControlName="productId" panelClass="product-select-panel">
-            @for (product of productOptions(); track product.id) {
-              <mat-option [value]="product.id">{{ product.name }}</mat-option>
+          <input
+            #productAutocompleteTrigger="matAutocompleteTrigger"
+            matInput
+            type="text"
+            [value]="productSearch()"
+            (input)="onProductSearchInput($event)"
+            [matAutocomplete]="productAutocomplete"
+            placeholder="Buscar produto"
+          />
+          <mat-autocomplete #productAutocomplete="matAutocomplete">
+            @for (product of getFilteredProducts(); track product.id) {
+              <mat-option [value]="product.name" (onSelectionChange)="selectProduct(product, $event)">
+                {{ product.name }}
+              </mat-option>
             }
-          </mat-select>
+          </mat-autocomplete>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="product-quantity-field">

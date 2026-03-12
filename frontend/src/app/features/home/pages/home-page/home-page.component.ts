@@ -120,7 +120,7 @@ export class HomePageComponent implements OnInit {
             return;
         }
 
-        this.updateOrder(orderId, formValue);
+        this.updateOrder(orderId, formValue, String(event.row?.['status'] ?? ''));
     }
 
     protected handleSelectionChanged(rows: DataTableRow[]): void {
@@ -147,13 +147,13 @@ export class HomePageComponent implements OnInit {
             return;
         }
 
-        const nextStatus = event.action.key === 'pay-order' ? 1 : 2;
+        const nextStatus = event.action.key === 'pay-order' ? 'PAID' : 'CANCELLED';
 
         this.orderApiService.update(orderId, {
             customerId,
-            Items: products.map((product) => ({
+            items: products.map((product) => ({
                 productId: product.productId,
-                Quantity: product.quantity
+                quantity: product.quantity
             })),
             status: nextStatus
         }).subscribe({
@@ -161,20 +161,20 @@ export class HomePageComponent implements OnInit {
                 this.loadOrders();
 
                 this.openFeedbackDialog({
-                    title: nextStatus === 1 ? 'Pedido pago' : 'Pedido cancelado',
+                    title: nextStatus === 'PAID' ? 'Pedido pago' : 'Pedido cancelado',
                     message: this.getResponseMessage(
                         response,
-                        nextStatus === 1 ? 'Pedido pago com sucesso.' : 'Pedido cancelado com sucesso.'
+                        nextStatus === 'PAID' ? 'Pedido pago com sucesso.' : 'Pedido cancelado com sucesso.'
                     ),
                     tone: 'success'
                 });
             },
             error: (error) => {
                 this.openFeedbackDialog({
-                    title: nextStatus === 1 ? 'Erro ao pagar pedido' : 'Erro ao cancelar pedido',
+                    title: nextStatus === 'PAID' ? 'Erro ao pagar pedido' : 'Erro ao cancelar pedido',
                     message: this.extractApiErrorMessage(
                         error,
-                        nextStatus === 1 ? 'Nao foi possivel pagar o pedido.' : 'Nao foi possivel cancelar o pedido.'
+                        nextStatus === 'PAID' ? 'Nao foi possivel pagar o pedido.' : 'Nao foi possivel cancelar o pedido.'
                     ),
                     tone: 'error'
                 });
@@ -226,8 +226,8 @@ export class HomePageComponent implements OnInit {
         });
     }
 
-    private updateOrder(orderId: string, formValue: OrderFormValue): void {
-        this.orderApiService.update(orderId, this.mapFormValueToPayload(formValue)).subscribe({
+    private updateOrder(orderId: string, formValue: OrderFormValue, currentStatus: string): void {
+        this.orderApiService.update(orderId, this.mapFormValueToPayload(formValue, this.normalizeStatusForRequest(currentStatus))).subscribe({
             next: (response) => {
                 this.loadOrders();
 
@@ -272,13 +272,14 @@ export class HomePageComponent implements OnInit {
         };
     }
 
-    private mapFormValueToPayload(order: OrderFormValue): UpsertOrderPayload {
+    private mapFormValueToPayload(order: OrderFormValue, status?: UpsertOrderPayload['status']): UpsertOrderPayload {
         return {
             customerId: order.customerId,
-            Items: order.products.map((product) => ({
+            items: order.products.map((product) => ({
                 productId: product.productId,
-                Quantity: product.quantity
-            }))
+                quantity: product.quantity
+            })),
+            ...(status ? { status } : {})
         };
     }
 
@@ -381,13 +382,32 @@ export class HomePageComponent implements OnInit {
         return fallbackMessage;
     }
 
+    private normalizeStatusForRequest(status: string): UpsertOrderPayload['status'] | undefined {
+        switch (status) {
+            case '0':
+            case 'CREATED':
+                return 'CREATED';
+            case '1':
+            case 'PAID':
+                return 'PAID';
+            case '2':
+            case 'CANCELLED':
+                return 'CANCELLED';
+            default:
+                return undefined;
+        }
+    }
+
     private formatOrderStatus(status: string): string {
         switch (status) {
             case '0':
+            case 'CREATED':
                 return 'Criado';
             case '1':
+            case 'PAID':
                 return 'Pago';
             case '2':
+            case 'CANCELLED':
                 return 'Cancelado';
             default:
                 return status

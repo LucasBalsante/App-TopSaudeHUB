@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>{{ data.title }}</h2>
 
-<form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+<form [formGroup]="productForm" (ngSubmit)="onSubmit()" (keydown.enter)="handleEnterSubmit($event)">
   <mat-dialog-content class="dialog-content">
     <p class="dialog-copy">Preencha os dados do produto.</p>
 

@@ -89,4 +89,9 @@ export class ProductFormDialogComponent {
       active: this.data.product?.active ?? true
     });
   }
+
+  protected handleEnterSubmit(event: Event): void {
+    event.preventDefault();
+    this.onSubmit();
+  }
 }

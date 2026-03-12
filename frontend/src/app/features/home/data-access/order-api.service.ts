@@ -7,13 +7,13 @@ import { BaseApiService } from '@core/services/base-api.service';
 
 export interface OrderApiItemPayload {
   productId: string;
-  Quantity: number;
+  quantity: number;
 }
 
 export interface UpsertOrderPayload {
   customerId: string;
-  Items: OrderApiItemPayload[];
-  status?: number;
+  items: OrderApiItemPayload[];
+  status?: 'CREATED' | 'PAID' | 'CANCELLED' | string;
 }
 
 export interface OrderApiListProductModel {

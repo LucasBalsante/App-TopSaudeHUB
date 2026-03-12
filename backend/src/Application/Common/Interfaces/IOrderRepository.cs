@@ -7,7 +7,10 @@ public interface IOrderRepository
     Task<IReadOnlyCollection<Order>> GetAllAsync(CancellationToken cancellationToken = default);
     Task<Order?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<Order?> GetTrackedByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<IReadOnlyCollection<OrderItem>> GetItemsByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default);
     Task AddAsync(Order order, CancellationToken cancellationToken = default);
-    void RemoveItems(IEnumerable<OrderItem> orderItems);
+    void AddItems(IEnumerable<OrderItem> orderItems);
+    Task RemoveItemsByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default);
+    Task RemoveByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default);
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }

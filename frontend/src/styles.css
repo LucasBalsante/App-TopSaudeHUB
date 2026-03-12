@@ -1,6 +1,9 @@
 :root {
 	color-scheme: light;
 	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+	--app-primary-color: #4d73bb;
+	--app-primary-color-strong: #3f63a8;
+	--app-on-primary-color: #ffffff;
 }
 
 * {

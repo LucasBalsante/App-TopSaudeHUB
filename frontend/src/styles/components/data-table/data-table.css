@@ -77,14 +77,19 @@ th {
 }
 
 .button.mat-mdc-unelevated-button {
-  color: #ffffff;
-  --mdc-filled-button-label-text-color: #ffffff;
-  --mat-filled-button-state-layer-color: #ffffff;
+  color: var(--app-on-primary-color);
+  --mdc-filled-button-label-text-color: var(--app-on-primary-color);
+  --mat-filled-button-state-layer-color: var(--app-on-primary-color);
 }
 
 .button-primary.mat-mdc-unelevated-button {
-  background-color: #4d73bb;
-  --mdc-filled-button-container-color: #4d73bb;
+  background-color: var(--app-primary-color);
+  --mdc-filled-button-container-color: var(--app-primary-color);
+}
+
+.button-primary.mat-mdc-unelevated-button:hover {
+  background-color: var(--app-primary-color-strong);
+  --mdc-filled-button-container-color: var(--app-primary-color-strong);
 }
 
 .button-danger.mat-mdc-unelevated-button {

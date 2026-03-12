@@ -21,6 +21,10 @@ import {
   ApiFeedbackDialogComponent,
   ApiFeedbackDialogData
 } from '../../../../../styles/components/dialog/api-feedback-dialog.component';
+import {
+  ConfirmationDialogComponent,
+  ConfirmationDialogData
+} from '../../../../../styles/components/dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-customer-page',
@@ -37,7 +41,8 @@ export class CustomerPageComponent implements OnInit {
   protected readonly customerDialogComponent = CustomerFormDialogComponent;
 
   protected readonly rowActions: DataTableRowAction[] = [
-    { key: 'edit', label: 'Editar' }
+    { key: 'edit', label: 'Editar' },
+    { key: 'delete', label: 'Deletar' }
   ];
 
   protected readonly customerDialogDataBuilder: DataTableDialogDataBuilder = (row, title) => {
@@ -92,6 +97,37 @@ export class CustomerPageComponent implements OnInit {
     this.updateCustomer(customerId, formValue);
   }
 
+  protected handleRowAction(event: { action: DataTableRowAction; row: DataTableRow }): void {
+    if (event.action.key !== 'delete') {
+      return;
+    }
+
+    const customerId = String(event.row['id'] ?? '');
+    const customerName = String(event.row['name'] ?? '');
+
+    if (!customerId) {
+      return;
+    }
+
+    const dialogData: ConfirmationDialogData = {
+      title: 'Excluir cliente',
+      message: `Deseja realmente excluir o cliente ${customerName}? Se ele for excluido, todos os pedidos vinculados tambem serao excluidos.`,
+      confirmLabel: 'Excluir',
+      cancelLabel: 'Cancelar'
+    };
+
+    this.dialog.open(ConfirmationDialogComponent, {
+      width: '460px',
+      data: dialogData
+    }).afterClosed().subscribe((confirmed: boolean | undefined) => {
+      if (!confirmed) {
+        return;
+      }
+
+      this.deleteCustomer(customerId);
+    });
+  }
+
   private loadCustomers(): void {
     this.customerApiService.list().subscribe((customers) => {
       this.tableData.set(customers.map((customer) => this.mapCustomerToRow(customer)));
@@ -132,6 +168,26 @@ export class CustomerPageComponent implements OnInit {
         this.openFeedbackDialog({
           title: 'Erro ao atualizar cliente',
           message: this.extractApiErrorMessage(error, 'Nao foi possivel atualizar o cliente.'),
+          tone: 'error'
+        });
+      }
+    });
+  }
+
+  private deleteCustomer(customerId: string): void {
+    this.customerApiService.remove(customerId).subscribe({
+      next: () => {
+        this.loadCustomers();
+        this.openFeedbackDialog({
+          title: 'Cliente excluido',
+          message: 'Cliente excluido com sucesso.',
+          tone: 'success'
+        });
+      },
+      error: (error) => {
+        this.openFeedbackDialog({
+          title: 'Erro ao excluir cliente',
+          message: this.extractApiErrorMessage(error, 'Nao foi possivel excluir o cliente.'),
           tone: 'error'
         });
       }

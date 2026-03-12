@@ -9,11 +9,13 @@ namespace backend.src.Application.Customers.Services;
 public class CustomerService : ICustomerService
 {
     private readonly ICustomerRepository _customerRepository;
+    private readonly IOrderRepository _orderRepository;
     private readonly ITransactionManager _transactionManager;
 
-    public CustomerService(ICustomerRepository customerRepository, ITransactionManager transactionManager)
+    public CustomerService(ICustomerRepository customerRepository, IOrderRepository orderRepository, ITransactionManager transactionManager)
     {
         _customerRepository = customerRepository;
+        _orderRepository = orderRepository;
         _transactionManager = transactionManager;
     }
 
@@ -102,7 +104,7 @@ public class CustomerService : ICustomerService
 
             if (await _customerRepository.HasRelatedOrdersAsync(id, innerCancellationToken))
             {
-                return OperationResult.Failure("O cliente não pode ser removido porque já possui pedidos vinculados.", StatusCodes.Status409Conflict);
+                await _orderRepository.RemoveByCustomerIdAsync(id, innerCancellationToken);
             }
 
             _customerRepository.Remove(customer);

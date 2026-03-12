@@ -90,6 +90,11 @@ export class CustomerFormDialogComponent {
     });
   }
 
+  protected handleEnterSubmit(event: Event): void {
+    event.preventDefault();
+    this.onSubmit();
+  }
+
   private formatCpf(value: string): string {
     const digits = this.extractDigits(value).slice(0, 11);
 

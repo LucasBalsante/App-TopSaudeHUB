@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild, inject, signal } from '@angular/core';
+import { MatAutocompleteModule, MatAutocompleteTrigger } from '@angular/material/autocomplete';
+import { MatOptionSelectionChange, MatOptionModule } from '@angular/material/core';
 import {
   FormBuilder,
   ReactiveFormsModule,
@@ -15,7 +17,6 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatOptionModule } from '@angular/material/core';
 import { CustomerApiModel, CustomerApiService } from '../../../customer/data-access/customer-api.service';
 import { ProductApiModel, ProductApiService } from '../../../product/data-access/product-api.service';
 
@@ -57,6 +58,7 @@ interface SelectedOrderProduct extends ProductApiModel {
   styleUrl: './order-form-dialog.component.css',
   imports: [
     ReactiveFormsModule,
+    MatAutocompleteModule,
     MatButtonModule,
     MatDialogTitle,
     MatDialogContent,
@@ -78,6 +80,14 @@ export class OrderFormDialogComponent implements OnInit {
   protected readonly productOptions = signal<ProductApiModel[]>([]);
   protected readonly selectedProducts = signal<SelectedOrderProduct[]>([]);
   protected readonly editingProductId = signal<string | null>(null);
+  protected readonly customerSearch = signal('');
+  protected readonly productSearch = signal('');
+
+  @ViewChild('customerAutocompleteTrigger')
+  private customerAutocompleteTrigger?: MatAutocompleteTrigger;
+
+  @ViewChild('productAutocompleteTrigger')
+  private productAutocompleteTrigger?: MatAutocompleteTrigger;
 
   protected readonly orderForm = this.formBuilder.nonNullable.group({
     cliente: ['', [Validators.required]],
@@ -93,6 +103,7 @@ export class OrderFormDialogComponent implements OnInit {
 
       if (selectedCustomerId) {
         this.clienteControl.setValue(selectedCustomerId);
+        this.customerSearch.set(customers.find((customer) => customer.id === selectedCustomerId)?.name ?? '');
       }
     });
 
@@ -154,6 +165,7 @@ export class OrderFormDialogComponent implements OnInit {
     if (!editingProductId && this.selectedProducts().some((item) => item.id === product.id)) {
       this.quantityControl.setValue(1);
       this.productIdControl.setValue('');
+      this.productSearch.set('');
       return;
     }
 
@@ -168,6 +180,7 @@ export class OrderFormDialogComponent implements OnInit {
 
     this.productIdControl.setValue('');
     this.quantityControl.setValue(1);
+    this.productSearch.set('');
   }
 
   protected editProduct(productId: string): void {
@@ -180,6 +193,7 @@ export class OrderFormDialogComponent implements OnInit {
     this.productIdControl.setValue(product.id);
     this.quantityControl.setValue(product.quantity);
     this.editingProductId.set(product.id);
+    this.productSearch.set(product.name);
   }
 
   protected removeProduct(productId: string): void {
@@ -189,6 +203,7 @@ export class OrderFormDialogComponent implements OnInit {
       this.editingProductId.set(null);
       this.productIdControl.setValue('');
       this.quantityControl.setValue(1);
+      this.productSearch.set('');
     }
   }
 
@@ -197,7 +212,7 @@ export class OrderFormDialogComponent implements OnInit {
   }
 
   protected onSubmit(): void {
-    if (this.orderForm.invalid) {
+    if (this.orderForm.invalid || !this.hasSelectedProducts()) {
       this.orderForm.markAllAsTouched();
       return;
     }
@@ -211,6 +226,16 @@ export class OrderFormDialogComponent implements OnInit {
       })),
       totalPedido: this.getOrderTotal()
     });
+  }
+
+  protected handleEnterSubmit(event: Event): void {
+    if (this.customerAutocompleteTrigger?.panelOpen || this.productAutocompleteTrigger?.panelOpen) {
+      event.preventDefault();
+      return;
+    }
+
+    event.preventDefault();
+    this.onSubmit();
   }
 
   protected formatCurrency(value: number): string {
@@ -236,6 +261,70 @@ export class OrderFormDialogComponent implements OnInit {
 
   protected hasSelectedProducts(): boolean {
     return this.selectedProducts().length > 0;
+  }
+
+  protected getFilteredCustomers(): CustomerApiModel[] {
+    const search = this.customerSearch().trim().toLowerCase();
+
+    return this.customerOptions().filter((customer) => !search || customer.name.toLowerCase().includes(search));
+  }
+
+  protected getAvailableProductOptions(): ProductApiModel[] {
+    const editingProductId = this.editingProductId();
+
+    return this.productOptions().filter((product) => product.isActive || product.id === editingProductId);
+  }
+
+  protected getFilteredProducts(): ProductApiModel[] {
+    const search = this.productSearch().trim().toLowerCase();
+
+    return this.getAvailableProductOptions().filter((product) => {
+      if (!search) {
+        return true;
+      }
+
+      return product.name.toLowerCase().includes(search) || product.sku.toLowerCase().includes(search);
+    });
+  }
+
+  protected onCustomerSearchInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.customerSearch.set(value);
+
+    const selectedCustomer = this.customerOptions().find((customer) => customer.id === this.clienteControl.getRawValue());
+
+    if (!selectedCustomer || selectedCustomer.name !== value) {
+      this.clienteControl.setValue('');
+    }
+  }
+
+  protected onProductSearchInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.productSearch.set(value);
+
+    const selectedProduct = this.productOptions().find((product) => product.id === this.productIdControl.getRawValue());
+
+    if (!selectedProduct || selectedProduct.name !== value) {
+      this.productIdControl.setValue('');
+    }
+  }
+
+  protected selectCustomer(customer: CustomerApiModel, event: MatOptionSelectionChange<string>): void {
+    if (!event.source.selected) {
+      return;
+    }
+
+    this.clienteControl.setValue(customer.id);
+    this.customerSearch.set(customer.name);
+  }
+
+  protected selectProduct(product: ProductApiModel, event: MatOptionSelectionChange<string>): void {
+    if (!event.source.selected) {
+      return;
+    }
+
+    this.productIdControl.setValue(product.id);
+    this.productSearch.set(product.name);
   }
 
   private getSelectedCustomerName(): string {

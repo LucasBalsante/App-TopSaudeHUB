@@ -153,7 +153,7 @@ public class OrderService : IOrderService
                 return OperationResult<OrderDto>.Failure("A quantidade dos itens do pedido deve ser maior que zero.", StatusCodes.Status400BadRequest);
             }
 
-            var existingItems = order.OrderItems.ToList();
+            var existingItems = await _orderRepository.GetItemsByOrderIdAsync(id, innerCancellationToken);
             var productIds = existingItems.Select(item => item.ProductId)
                 .Concat(groupedItems.Select(item => item.ProductId))
                 .Distinct()
@@ -193,15 +193,22 @@ public class OrderService : IOrderService
             try
             {
                 order.UpdateCustomer(request.CustomerId);
-                _orderRepository.RemoveItems(existingItems);
+                order.UpdateStatus(request.Status);
+                await _orderRepository.RemoveItemsByOrderIdAsync(order.Id, innerCancellationToken);
+
                 order.ClearItems();
+                var newItems = new List<OrderItem>();
 
                 foreach (var item in groupedItems)
                 {
                     var product = productsById[item.ProductId];
                     product.DecreaseStock(item.Quantity);
-                    order.AddItem(product, item.Quantity);
+                    var orderItem = new OrderItem(order.Id, product.Id, product.Price, item.Quantity);
+                    order.AddItem(orderItem);
+                    newItems.Add(orderItem);
                 }
+
+                _orderRepository.AddItems(newItems);
 
                 await _orderRepository.SaveChangesAsync(innerCancellationToken);
 

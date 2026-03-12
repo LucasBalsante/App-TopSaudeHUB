@@ -22,7 +22,7 @@ public sealed class TransactionManager : ITransactionManager
             await transaction.CommitAsync(cancellationToken);
             return result;
         }
-        catch
+        catch (Exception e)
         {
             await transaction.RollbackAsync(cancellationToken);
             throw;

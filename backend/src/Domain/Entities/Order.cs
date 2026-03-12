@@ -37,6 +37,13 @@ namespace backend.src.Domain.Entities
             ArgumentNullException.ThrowIfNull(product);
 
             var orderItem = new OrderItem(Id, product.Id, product.Price, quantity);
+            AddItem(orderItem);
+        }
+
+        public void AddItem(OrderItem orderItem)
+        {
+            ArgumentNullException.ThrowIfNull(orderItem);
+
             OrderItems.Add(orderItem);
             TotalAmount += orderItem.LineTotal;
         }
@@ -44,6 +51,11 @@ namespace backend.src.Domain.Entities
         public void UpdateCustomer(Guid customerId)
         {
             CustomerId = ValidateCustomerId(customerId);
+        }
+
+        public void UpdateStatus(OrderStatus status)
+        {
+            Status = ValidateStatus(status);
         }
 
         public void ClearItems()
@@ -70,6 +82,16 @@ namespace backend.src.Domain.Entities
             }
 
             return totalAmount;
+        }
+
+        private static OrderStatus ValidateStatus(OrderStatus status)
+        {
+            if (!Enum.IsDefined(status))
+            {
+                throw new ArgumentException("O status do pedido é inválido.", nameof(status));
+            }
+
+            return status;
         }
     }
 }

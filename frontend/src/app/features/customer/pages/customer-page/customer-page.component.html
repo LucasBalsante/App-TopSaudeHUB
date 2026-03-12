@@ -10,6 +10,7 @@
       [enableRowActions]="true"
       [rowActions]="rowActions"
       (dialogSubmitted)="handleDialogSubmitted($event)"
+      (rowActionClicked)="handleRowAction($event)"
       newDialogTitle="Novo cliente"
       editDialogTitle="Editar cliente"
       [stickyHeader]="true"

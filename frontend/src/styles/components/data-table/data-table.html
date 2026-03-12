@@ -2,17 +2,10 @@
   <button mat-flat-button type="button" class="button button-primary" (click)="openDialog()">
     Cadastrar Novo
   </button>
-  <button
-      mat-flat-button
-      type="button"
-      class="button button-danger">
-    Remover Selecionados
-  </button>
 </div>
 
 
 <mat-form-field appearance="outline" class="table-filter">
-  <mat-label>Filtro</mat-label>
   <input matInput (keyup)="applyFilter($event)" [placeholder]="filterPlaceholder()" #input>
 </mat-form-field>
 

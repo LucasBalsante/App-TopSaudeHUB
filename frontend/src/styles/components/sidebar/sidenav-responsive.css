@@ -10,8 +10,8 @@
 }
 
 .toolbar {
-  background-color: #4d73bb;
-  color: #ffffff;
+  background-color: var(--app-primary-color);
+  color: var(--app-on-primary-color);
 }
 
 .sidenav {
