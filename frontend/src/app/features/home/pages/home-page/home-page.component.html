@@ -1,0 +1,22 @@
+<section class="home-page">
+    <sidenav-responsive>
+        <h2>Meus Pedidos</h2>
+        <data-table
+            [columns]="tableColumns"
+            [data]="tableData()"
+            [dialogComponent]="orderDialogComponent"
+            [dialogDataBuilder]="orderDialogDataBuilder"
+            [enableSelection]="true"
+            [enableRowActions]="true"
+            [rowActions]="rowActions"
+            (dialogSubmitted)="handleDialogSubmitted($event)"
+            newDialogTitle="Novo pedido"
+            editDialogTitle="Editar pedido"
+            [stickyHeader]="true"
+            [stickyFooter]="true"
+            [enableRowClickLog]="true"
+            ariaLabel="Tabela de pedidos"
+            filterPlaceholder="Buscar pedidos"
+        />
+    </sidenav-responsive>
+</section>

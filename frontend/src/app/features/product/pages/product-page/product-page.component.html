@@ -1,0 +1,22 @@
+<section class="product-page">
+  <sidenav-responsive>
+    <h2>Produtos</h2>
+    <data-table
+      [columns]="tableColumns"
+      [data]="tableData()"
+      [dialogComponent]="productDialogComponent"
+      [dialogDataBuilder]="productDialogDataBuilder"
+      [enableSelection]="true"
+      [enableRowActions]="true"
+      [rowActions]="rowActions"
+      (dialogSubmitted)="handleDialogSubmitted($event)"
+      (rowActionClicked)="handleRowAction($event)"
+      newDialogTitle="Novo produto"
+      editDialogTitle="Editar produto"
+      [stickyHeader]="true"
+      [stickyFooter]="true"
+      ariaLabel="Tabela de produtos"
+      filterPlaceholder="Buscar produtos"
+    />
+  </sidenav-responsive>
+</section>

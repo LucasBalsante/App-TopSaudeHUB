@@ -1,0 +1,61 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+
+<form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content class="dialog-content">
+    <p class="dialog-copy">Preencha os dados do produto.</p>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Nome</mat-label>
+      <input matInput formControlName="name" required />
+      @if (nameControl.invalid && (nameControl.dirty || nameControl.touched)) {
+        @if (nameControl.hasError('required')) {
+          <mat-error>Nome e obrigatorio.</mat-error>
+        }
+        @if (nameControl.hasError('minlength')) {
+          <mat-error>Nome deve ter pelo menos 3 caracteres.</mat-error>
+        }
+      }
+    </mat-form-field>
+
+    @if (isEditMode) {
+      <mat-form-field appearance="outline">
+        <mat-label>Codigo</mat-label>
+        <input matInput [value]="productCode" disabled readonly />
+      </mat-form-field>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Preco</mat-label>
+      <input matInput formControlName="price" type="number" min="0.01" step="0.01" required />
+      @if (priceControl.invalid && (priceControl.dirty || priceControl.touched)) {
+        @if (priceControl.hasError('required')) {
+          <mat-error>Preco e obrigatorio.</mat-error>
+        }
+        @if (priceControl.hasError('min')) {
+          <mat-error>Preco deve ser maior que zero.</mat-error>
+        }
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Quantidade em estoque</mat-label>
+      <input matInput formControlName="qtdStock" type="number" min="0" step="1" required />
+      @if (qtdStockControl.invalid && (qtdStockControl.dirty || qtdStockControl.touched)) {
+        @if (qtdStockControl.hasError('required')) {
+          <mat-error>Quantidade em estoque e obrigatoria.</mat-error>
+        }
+        @if (qtdStockControl.hasError('min')) {
+          <mat-error>Quantidade em estoque nao pode ser negativa.</mat-error>
+        }
+      }
+    </mat-form-field>
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="onCancel()">{{ data.cancelLabel ?? 'Cancelar' }}</button>
+    <button mat-flat-button type="submit" [disabled]="productForm.invalid">
+      {{ data.confirmLabel ?? 'Salvar' }}
+    </button>
+  </mat-dialog-actions>
+</form>

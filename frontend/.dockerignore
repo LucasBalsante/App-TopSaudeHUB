@@ -1,0 +1,9 @@
+node_modules
+dist
+.angular
+.git
+.gitignore
+README-frontend.md
+npm-debug.log
+cypress/videos
+cypress/screenshots

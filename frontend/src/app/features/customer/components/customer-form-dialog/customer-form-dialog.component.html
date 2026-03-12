@@ -1,0 +1,53 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+
+<form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content class="dialog-content">
+    <p class="dialog-copy">Preencha os dados do cliente.</p>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Nome</mat-label>
+      <input matInput formControlName="name" required />
+      @if (nameControl.invalid && (nameControl.dirty || nameControl.touched)) {
+        @if (nameControl.hasError('required')) {
+          <mat-error>Nome e obrigatorio.</mat-error>
+        }
+        @if (nameControl.hasError('minlength')) {
+          <mat-error>Nome deve ter pelo menos 3 caracteres.</mat-error>
+        }
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" type="email" required />
+      @if (emailControl.invalid && (emailControl.dirty || emailControl.touched)) {
+        @if (emailControl.hasError('required')) {
+          <mat-error>Email e obrigatorio.</mat-error>
+        }
+        @if (emailControl.hasError('email')) {
+          <mat-error>Informe um email valido.</mat-error>
+        }
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Documento</mat-label>
+      <input matInput formControlName="document" required />
+      @if (documentControl.invalid && (documentControl.dirty || documentControl.touched)) {
+        @if (documentControl.hasError('required')) {
+          <mat-error>Documento e obrigatorio.</mat-error>
+        }
+        @if (documentControl.hasError('pattern')) {
+          <mat-error>Use um CPF valido com 11 digitos ou no formato 000.000.000-00.</mat-error>
+        }
+      }
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="onCancel()">{{ data.cancelLabel ?? 'Cancelar' }}</button>
+    <button mat-flat-button type="submit" [disabled]="customerForm.invalid">
+      {{ data.confirmLabel ?? 'Salvar' }}
+    </button>
+  </mat-dialog-actions>
+</form>

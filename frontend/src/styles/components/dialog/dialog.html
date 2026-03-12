@@ -1,0 +1,25 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+<mat-dialog-content>
+  <p>Preencha os dados para o novo cadastro.</p>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Nome</mat-label>
+    <input matInput [(ngModel)]="name" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Descricao</mat-label>
+    <input matInput [(ngModel)]="animal" />
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="onNoClick()">{{ data.cancelLabel ?? 'Cancelar' }}</button>
+  <button
+    mat-flat-button
+    type="button"
+    [mat-dialog-close]="{ name: name, animal: animal }"
+    cdkFocusInitial
+  >
+    {{ data.confirmLabel ?? 'Salvar' }}
+  </button>
+</mat-dialog-actions>

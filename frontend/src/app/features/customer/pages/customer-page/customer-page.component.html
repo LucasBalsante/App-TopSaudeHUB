@@ -1,0 +1,21 @@
+<section class="customer-page">
+  <sidenav-responsive>
+    <h2>Clientes</h2>
+    <data-table
+      [columns]="tableColumns"
+      [data]="tableData()"
+      [dialogComponent]="customerDialogComponent"
+      [dialogDataBuilder]="customerDialogDataBuilder"
+      [enableSelection]="true"
+      [enableRowActions]="true"
+      [rowActions]="rowActions"
+      (dialogSubmitted)="handleDialogSubmitted($event)"
+      newDialogTitle="Novo cliente"
+      editDialogTitle="Editar cliente"
+      [stickyHeader]="true"
+      [stickyFooter]="true"
+      ariaLabel="Tabela de clientes"
+      filterPlaceholder="Buscar clientes"
+    />
+  </sidenav-responsive>
+</section>

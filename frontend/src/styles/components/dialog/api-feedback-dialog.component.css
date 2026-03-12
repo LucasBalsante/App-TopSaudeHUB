@@ -1,0 +1,28 @@
+:host {
+  display: block;
+}
+
+.feedback-content {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  min-width: min(100%, 360px);
+  padding-top: 8px;
+  text-align: center;
+}
+
+.feedback-icon {
+  width: 40px;
+  height: 40px;
+  font-size: 40px;
+  color: #2e7d32;
+}
+
+.feedback-error .feedback-icon {
+  color: #c62828;
+}
+
+.feedback-message {
+  margin: 0;
+  color: #334155;
+}

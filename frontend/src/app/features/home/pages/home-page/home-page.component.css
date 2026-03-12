@@ -1,0 +1,12 @@
+:host {
+  display: block;
+}
+
+.home-page {
+  min-height: 100vh;
+  background-color: #ffffff;
+}
+
+.home-page h2 {
+  text-align: center;
+}

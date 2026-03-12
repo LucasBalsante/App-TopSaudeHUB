@@ -1,0 +1,12 @@
+:host {
+  display: block;
+}
+
+.product-page {
+  min-height: 100vh;
+  background-color: #ffffff;
+}
+
+.product-page h2 {
+  text-align: center;
+}

@@ -1,0 +1,23 @@
+:host {
+  display: block;
+}
+
+form {
+  display: block;
+}
+
+.dialog-content {
+  display: grid;
+  gap: 16px;
+  min-width: min(100%, 420px);
+  padding-top: 8px;
+}
+
+.dialog-copy {
+  margin: 0;
+  color: #475569;
+}
+
+mat-form-field {
+  width: 100%;
+}

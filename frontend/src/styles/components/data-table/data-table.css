@@ -1,0 +1,99 @@
+.data-table {
+  width: 100%;
+}
+
+.table-surface {
+  overflow: hidden;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #dbe3ef;
+}
+
+.table-filter {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.mat-mdc-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+td,
+th {
+  white-space: nowrap;
+}
+
+.selection-column {
+  width: 56px;
+  overflow: initial;
+}
+
+.actions-column {
+  width: 72px;
+  text-align: center;
+}
+
+.actions-cell {
+  overflow: visible;
+}
+
+.actions-cell .mat-mdc-icon-button {
+  color: #4b5563;
+}
+
+.align-center {
+  text-align: center;
+}
+
+.align-end {
+  text-align: right;
+}
+
+.data-row-clickable {
+  cursor: pointer;
+}
+
+.data-row-clickable:hover {
+  background: #f8fafc;
+}
+
+.click-log {
+  margin-top: 16px;
+  padding: 16px 20px;
+  border-radius: 16px;
+  background: #242424;
+  border: 1px solid #dbe3ef;
+}
+
+.click-log p {
+  margin-top: 8px;
+  color: #ffffff;
+  word-break: break-word;
+}
+
+.button-container {
+  padding-bottom: 16px;
+}
+
+.button.mat-mdc-unelevated-button {
+  color: #ffffff;
+  --mdc-filled-button-label-text-color: #ffffff;
+  --mat-filled-button-state-layer-color: #ffffff;
+}
+
+.button-primary.mat-mdc-unelevated-button {
+  background-color: #4d73bb;
+  --mdc-filled-button-container-color: #4d73bb;
+}
+
+.button-danger.mat-mdc-unelevated-button {
+  background-color: #dc2626;
+  --mdc-filled-button-container-color: #dc2626;
+}
+
+.button + .button {
+  margin-left: 8px;
+}
+
+

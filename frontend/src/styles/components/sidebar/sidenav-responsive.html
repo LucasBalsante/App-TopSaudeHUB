@@ -1,0 +1,28 @@
+<div class="container" [class.is-mobile]="isMobile()">
+  <mat-toolbar class="toolbar">
+    <button matIconButton (click)="snav.toggle()" aria-label="Abrir menu lateral">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <h1 class="app-name">TopSaudeHUB</h1>
+  </mat-toolbar>
+
+  <mat-sidenav-container class="sidenav-container" [style.marginTop.px]="isMobile() ? 56 : 0">
+    <mat-sidenav class="sidenav" #snav [mode]="isMobile() ? 'over' : 'side'" [fixedInViewport]="isMobile()" fixedTopGap="56" [opened]="!isMobile()">
+      <mat-nav-list>
+        <a *ngFor="let item of navigationItems; trackBy: trackByLink" class="nav-item" mat-list-item [attr.href]="item.link">
+          <span class="nav-content">
+            <span class="nav-label">{{ item.title }}</span>
+            <mat-icon class="nav-icon">chevron_right</mat-icon>
+          </span>
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+      <section class="content-shell">
+        <ng-content />
+      </section>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
+
