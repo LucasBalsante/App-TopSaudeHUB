@@ -1,11 +1,16 @@
 using backend.src.Application.Common.Interfaces;
 using backend.src.Application;
+using backend.src.Api.Configuration;
 using backend.src.Api.Endpoints;
 using backend.src.Api.Middlewares;
 using backend.src.Infrastructure;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+EnvironmentFileLoader.LoadIfExists(
+    Path.Combine(builder.Environment.ContentRootPath, ".env"),
+    Path.Combine(builder.Environment.ContentRootPath, "..", ".env"));
 
 const string FrontendCorsPolicy = "FrontendCors";
 

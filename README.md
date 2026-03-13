@@ -107,6 +107,8 @@ As rotas principais da interface sao:
 
 Esta e a forma mais direta de subir todo o stack.
 
+Antes de subir os containers, crie o arquivo `.env` na raiz do projeto a partir do `.env.example`.
+
 ### Subir aplicacao completa
 
 ```powershell
@@ -139,6 +141,15 @@ Pre-requisitos:
 
 - .NET SDK 10
 - PostgreSQL disponivel localmente ou via Docker
+
+Na pasta `backend`:
+
+```powershell
+dotnet restore
+dotnet run --launch-profile http
+```
+
+Para execucao local do backend, mantenha o arquivo `.env` configurado na raiz do repositorio.
 
 ### Frontend
 
@@ -243,6 +254,8 @@ Atualmente o projeto utiliza configuracoes em:
 - `backend/src/Api/appsettings.json`
 - `backend/src/Api/appsettings.Container.json`
 - `frontend/src/environments/environment.ts`
+
+As credenciais e connection strings do banco e do backend devem ser definidas no arquivo `.env` da raiz. Use `.env.example` como modelo para criar a configuracao local.
 
 ## Observacoes Importantes
 
