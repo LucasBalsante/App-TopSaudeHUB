@@ -107,8 +107,7 @@ public class OrderService : IOrderService
                 await _orderRepository.AddAsync(order, innerCancellationToken);
                 await _orderRepository.SaveChangesAsync(innerCancellationToken);
 
-                var createdOrder = await _orderRepository.GetByIdAsync(order.Id, innerCancellationToken) ?? order;
-                return OperationResult<OrderDto>.Success(MapToDto(createdOrder), "Pedido criado com sucesso.", StatusCodes.Status201Created);
+                return OperationResult<OrderDto>.Success(MapToDto(order, productsById), "Pedido criado com sucesso.", StatusCodes.Status201Created);
             }
             catch (ArgumentException ex)
             {
@@ -212,8 +211,7 @@ public class OrderService : IOrderService
 
                 await _orderRepository.SaveChangesAsync(innerCancellationToken);
 
-                var updatedOrder = await _orderRepository.GetByIdAsync(order.Id, innerCancellationToken) ?? order;
-                return OperationResult<OrderDto>.Success(MapToDto(updatedOrder), "Pedido atualizado com sucesso.");
+                return OperationResult<OrderDto>.Success(MapToDto(order, productsById), "Pedido atualizado com sucesso.");
             }
             catch (ArgumentException ex)
             {
@@ -236,6 +234,27 @@ public class OrderService : IOrderService
                 item.UnitPrice,
                 item.Quantity,
                 item.LineTotal))
+            .ToList());
+
+    private static OrderDto MapToDto(Order order, IReadOnlyDictionary<Guid, Product> productsById) => new(
+        order.Id,
+        order.CustomerId,
+        order.TotalAmount,
+        order.Status,
+        order.CreatedAt,
+        order.OrderItems
+            .Select(item =>
+            {
+                productsById.TryGetValue(item.ProductId, out var product);
+
+                return new OrderItemDto(
+                    item.ProductId,
+                    product?.Name ?? item.Product?.Name ?? string.Empty,
+                    product?.Sku ?? item.Product?.Sku ?? string.Empty,
+                    item.UnitPrice,
+                    item.Quantity,
+                    item.LineTotal);
+            })
             .ToList());
 
     private static OrderSummaryDto MapToSummaryDto(Order order) => new(

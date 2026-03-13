@@ -18,10 +18,27 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Dialog, DialogData } from '../dialog/dialog';
+
+function createPaginatorIntl(): MatPaginatorIntl {
+    const paginatorIntl = new MatPaginatorIntl();
+    paginatorIntl.itemsPerPageLabel = 'Itens por pagina';
+    paginatorIntl.getRangeLabel = (page: number, pageSize: number, length: number) => {
+        if (length === 0 || pageSize === 0) {
+            return `0 de ${length}`;
+        }
+
+        const startIndex = page * pageSize;
+        const endIndex = Math.min(startIndex + pageSize, length);
+
+        return `${startIndex + 1} - ${endIndex} de ${length}`;
+    };
+
+    return paginatorIntl;
+}
 
 export type DataTableCellValue = string | number | boolean | Date | null | undefined;
 
@@ -74,13 +91,19 @@ const ACTIONS_COLUMN_KEY = '__actions';
         MatSortModule,
         MatPaginatorModule
     ],
+    providers: [
+        {
+            provide: MatPaginatorIntl,
+            useFactory: createPaginatorIntl
+        }
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DataTable implements AfterViewInit {
     readonly columns = input.required<DataTableColumn[]>();
     readonly data = input.required<DataTableRow[]>();
     readonly filterPlaceholder = input('Filtrar registros');
-    readonly noDataMessage = input('Nenhum dado correspondente ao filtro atual.');
+    readonly noDataMessage = input('Nenhum dado encontrado!');
     readonly ariaLabel = input('Tabela de dados');
     readonly role = input<'table' | 'grid' | 'treegrid'>('table');
     readonly pageSizeOptions = input<number[]>([5, 10, 25, 100]);

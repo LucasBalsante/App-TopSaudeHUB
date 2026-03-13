@@ -5,7 +5,7 @@ namespace backend.tests.Unit.Domain.Entities;
 public class ProductTests
 {
     [Fact]
-    public void Update_ShouldKeepExistingSku_WhenOtherFieldsChange()
+    public void Atualizar_DeveManterSkuExistente_QuandoOutrosCamposMudarem()
     {
         var product = new Product("Dipirona", "dip-0001", 10m, 5);
 
@@ -19,7 +19,7 @@ public class ProductTests
     }
 
     [Fact]
-    public void DecreaseStock_ShouldThrowArgumentException_WhenProductIsInactive()
+    public void BaixarEstoque_DeveLancarArgumentException_QuandoOProdutoEstiverInativo()
     {
         var product = new Product("Dipirona", "DIP-0001", 10m, 5, false);
 
@@ -29,5 +29,47 @@ public class ProductTests
 
         Assert.Equal("quantity", exception.ParamName);
         Assert.Contains("inativo", exception.Message);
+    }
+
+    [Fact]
+    public void Construtor_DeveNormalizarNomeESku_QuandoOsDadosForemValidos()
+    {
+        var product = new Product("  Dipirona Gotas  ", " dip-0001 ", 10m, 5);
+
+        Assert.Equal("Dipirona Gotas", product.Name);
+        Assert.Equal("DIP-0001", product.Sku);
+    }
+
+    [Fact]
+    public void AumentarEstoque_DeveSomarQuantidadeAoEstoqueAtual()
+    {
+        var product = new Product("Dipirona", "DIP-0001", 10m, 5);
+
+        product.IncreaseStock(3);
+
+        Assert.Equal(8, product.StockQty);
+    }
+
+    [Fact]
+    public void BaixarEstoque_DeveSubtrairQuantidade_QuandoHouverEstoqueSuficiente()
+    {
+        var product = new Product("Dipirona", "DIP-0001", 10m, 5);
+
+        product.DecreaseStock(2);
+
+        Assert.Equal(3, product.StockQty);
+    }
+
+    [Fact]
+    public void AumentarEstoque_DeveLancarArgumentException_QuandoQuantidadeForMenorOuIgualAZero()
+    {
+        var product = new Product("Dipirona", "DIP-0001", 10m, 5);
+
+        var action = () => product.IncreaseStock(0);
+
+        var exception = Assert.Throws<ArgumentException>(action);
+
+        Assert.Equal("quantity", exception.ParamName);
+        Assert.Contains("maior que zero", exception.Message);
     }
 }
