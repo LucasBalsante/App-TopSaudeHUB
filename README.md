@@ -36,7 +36,6 @@ No frontend, a aplicacao Angular consome a API do backend e oferece interfaces p
 - Angular 19
 - Angular Material
 - RxJS
-- Cypress
 
 ### Infraestrutura
 
@@ -96,7 +95,6 @@ As rotas principais da interface sao:
 |-- frontend/
 |   |-- src/
 |   |-- public/
-|   |-- cypress/
 |   |-- Dockerfile
 |   `-- package.json
 |-- docker-compose.yml
